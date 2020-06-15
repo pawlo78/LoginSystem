@@ -1,8 +1,4 @@
-<?php
-
-    //time = 18.00
-    //git fetch --all
-    //git reset --hard origin/master
+<?php    
 
     include('db_connect.php');
 
