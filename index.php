@@ -1,5 +1,7 @@
 <?php
 
+    //time = 18.00
+
     include('db_connect.php');
 
     echo '<B>List of candidates:</B><BR>';
@@ -24,7 +26,8 @@
             echo '<td>'.$value['surname'].'</td>';
             echo '<td>'.$value['location'].'</td>';
             echo '<td>'.$value['description'].'</td>';
-            echo '<td><a href="delete.php?id='.$value['id_person'].'">Delete</a></td>';            
+            echo '<td><a href="delete.php?id='.$value['id_person'].'">Delete</a></td>';     
+            echo '<td><a href="add.php?id='.$value['id_person'].'">Edit</a></td>';         
         echo '</tr>';
     }
 
