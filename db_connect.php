@@ -1,7 +1,7 @@
 <?php
     
     try {
-        $pdo = new PDO('mysql:host=localhost; dbname=db_persons', 'root', '123456');
+        $pdo = new PDO('mysql:host=localhost; dbname=db_persons', 'root', 'asdQWE123');
         //pdo wyrzuca błedy przy zapytaniach jesli wystąpią
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);        
         //zwraca tablice asocjacyjną
