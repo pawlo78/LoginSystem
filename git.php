@@ -1,6 +1,7 @@
 <?php
 
-    //time = 18.00
+    //dział 8
+    //time = 21.15
     //git fetch --all
     //git reset --hard origin/master
 
