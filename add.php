@@ -1,6 +1,6 @@
 <?php
 
-    include('db_connect.php');
+    include('session.php');
     
     if (isset($_POST['name'])) {
 

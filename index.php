@@ -1,6 +1,6 @@
 <?php    
 
-    include('db_connect.php');
+include('session.php');
 
     echo '<B>List of candidates:</B><BR>';
     //zapytanie do bazy danych

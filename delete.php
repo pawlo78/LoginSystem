@@ -1,6 +1,6 @@
 <?php
 
-    include('db_connect.php');
+    include('session.php');
 
     $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
