@@ -4,7 +4,7 @@ include('session.php');
 
     echo '<B>List of candidates:</B><BR>';
     //zapytanie do bazy danych
-    $tbl = $pdo->query('Select pe.*, pr.nameProf FROM person pe LEFT JOIN professions pr ON pe.prof_id = pr.id ORDER BY pe.id_person DESC;');
+    $tbl = $pdo->query('Select pe.*, pr.nameProf FROM person pe LEFT JOIN professions pr ON pe.prof_id = pr.id ORDER BY pe.prof_id DESC;');
     //link do pliku dodaj ADD
     echo '<BR><a href="add.php">Add user</a><BR><BR>';
 
