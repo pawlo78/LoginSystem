@@ -8,8 +8,9 @@
         if($id >0) {
             $toadd = $pdo->prepare('UPDATE `person` SET `name`= :name, `surname`=:surname, `prof_id`=:prof_id, `location`=:location, `description`=:description WHERE id_person = :id');
             $toadd->bindParam(':id', $id);
-        }else {
+        }else {      
             $toadd = $pdo->prepare('INSERT INTO `person`(`name`, `surname`, `prof_id`, `location`, `description`) VALUES ( :name, :surname, :prof_id, :location, :description)');
+                     
         }
 
         //bindowanie parametru i zmiennej - dodatkowe filtrowanie sqlinjection
@@ -18,7 +19,10 @@
         $toadd->bindParam(':prof_id', $_POST['prof_id']);
         $toadd->bindParam(':location', $_POST['location']);
         $toadd->bindParam(':description', $_POST['description']);
-        $toadd->execute();
+        for ($i=0; $i < 200; $i++) { 
+            $toadd->execute();
+        }
+       
 
         header('location: index.php');
     }  
