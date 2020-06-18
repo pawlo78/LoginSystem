@@ -18,11 +18,8 @@
         $toadd->bindParam(':surname', $_POST['surname']);
         $toadd->bindParam(':prof_id', $_POST['prof_id']);
         $toadd->bindParam(':location', $_POST['location']);
-        $toadd->bindParam(':description', $_POST['description']);
-        for ($i=0; $i < 200; $i++) { 
-            $toadd->execute();
-        }
-       
+        $toadd->bindParam(':description', $_POST['description']);       
+        $toadd->execute();       
 
         header('location: index.php');
     }  
