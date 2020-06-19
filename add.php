@@ -6,30 +6,57 @@
 
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 
-        if(isset($_FILES['cover']['error']) && $_FILES['cover']['error'] == 0) {
+        $filanme = 0;
+
+        if(isset($_FILES['foto']['error']) && $_FILES['foto']['error'] == 0) {
             require('vendor/autoload.php');
 
             $uid = uniqid();
-            $ext = pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION);
+            $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
 
 
-            $fileName = 'cover_' . $uid . '.' . $ext;
+            $fileName = 'foto_' . $uid . '.' . $ext;
+            $fileNameOrg = 'org_' . $uid . '.' . $ext;
             $imagine = new Imagine\Gd\Imagine();
             $size    = new Imagine\Image\Box(200, 200);
             $mode    = Imagine\Image\ImageInterface::THUMBNAIL_INSET;
             //$mode    = Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND;
-            $imagine->open($_FILES['cover']['tmp_name'])
+            $imagine->open($_FILES['foto']['tmp_name'])
                 ->thumbnail($size, $mode)
                 ->save(__DIR__ . '/img/' . $fileName);
             ;
+
+            move_uploaded_file($_FILES['foto']['tmp_name'], __DIR__ . '/img/' . $fileNameOrg);
+            
         }
 
         if($id >0) {
-            $toadd = $pdo->prepare('UPDATE `person` SET `name`= :name, `surname`=:surname, `prof_id`=:prof_id, `location`=:location, `description`=:description WHERE id_person = :id');
+
+            if ($fileName) {
+                $toadd = $pdo->prepare('UPDATE `person` SET `name`= :name, `surname`=:surname, `prof_id`=:prof_id, `location`=:location, `description`=:description, `foto`=:foto WHERE id_person = :id');
+                $toadd->bindParam(':foto', $fileName);
+                
+                $sthFoto = $pdo->prepare('SELECT foto FROM person WHERE id_person = :id');
+                //bindowanie parametru i zmiennej - dodatkowe filtrowanie sqlinjection
+                $sthFoto->bindParam(':id', $id);
+                $sthFoto->execute();
+                $foto = $sthFoto->fetch()['foto'];
+                
+                if($foto) {
+                    unlink(__DIR__ .'/img/' . $foto);
+                    unlink(__DIR__ .'/img/' . str_replace('foto_', 'org_', $foto));
+                }
+
+            } else {
+                $toadd = $pdo->prepare('UPDATE `person` SET `name`= :name, `surname`=:surname, `prof_id`=:prof_id, `location`=:location, `description`=:description WHERE id_person = :id');                
+            }
             $toadd->bindParam(':id', $id);
+           
         }else {      
-            $toadd = $pdo->prepare('INSERT INTO `person`(`name`, `surname`, `prof_id`, `location`, `description`) VALUES ( :name, :surname, :prof_id, :location, :description)');
-                     
+            $toadd = $pdo->prepare('INSERT INTO `person`(`name`, `surname`, `prof_id`, `location`, `description`, foto) VALUES ( :name, :surname, :prof_id, :location, :description, :foto)');
+            if($fileName) {
+                $toadd->bindParam(':foto', $fileName);           
+            }         
         }
 
         //bindowanie parametru i zmiennej - dodatkowe filtrowanie sqlinjection
@@ -37,7 +64,7 @@
         $toadd->bindParam(':surname', $_POST['surname']);
         $toadd->bindParam(':prof_id', $_POST['prof_id']);
         $toadd->bindParam(':location', $_POST['location']);
-        $toadd->bindParam(':description', $_POST['description']);       
+        $toadd->bindParam(':description', $_POST['description']);
         $toadd->execute();       
 
         header('location: index.php');
@@ -81,7 +108,12 @@
         ?>
     </select><BR><BR>
     Location: <input type="text" name="location"<?php if(isset($result['location'])) {echo 'value="'.$result['location'].'"';} ?>><BR><BR>
-    Zdjęcie: <input type="file" name="cover"><BR><BR>
+    Foto: <input type="file" name="foto"><BR><BR>
+    <?php
+        if (isSet($result['foto']) && $result['foto']) {
+            echo '<img src="img/' . $result['foto'] .'">';
+        }
+    ?><BR><BR>
     Description: <textarea name="description"><?php if(isset($result['description'])) {echo $result['description'];} ?></textarea><BR><BR>
     <input type="submit" value="Save">
 </form>

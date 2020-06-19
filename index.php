@@ -3,7 +3,7 @@
 include('session.php');
 
     //stronicowanie
-    $page = isset($_GET['page']) ? intval($_GET['page'] - 1) : 1;
+    $page = isset($_GET['page']) ? intval($_GET['page'] - 1) : 0;
     $countRecords = $pdo->query('SELECT COUNT(id_person) as cnt FROM person')->fetch()['cnt'];
     $limitPages = 10;
     $from = $page * $limitPages;
@@ -18,14 +18,15 @@ include('session.php');
     $sqlQuery ='Select pe.*, pr.nameProf FROM person pe LEFT JOIN professions pr ON pe.prof_id = pr.id 
                 ORDER BY pe.prof_id DESC LIMIT '.$from.','.$limitPages.';'; 
     $tbl = $pdo->query($sqlQuery);
-    
+    /*
     echo 'PAGE: '.$page.'<BR>';
     echo 'COUNT: '.$countRecords.'<BR>';
     echo 'PAGE: '.$limitPages.'<BR>';
     echo 'FROM: '.$from.'<BR>';
     echo 'ALL PAGE: '.$allPages.'<BR>';
     echo 'SQL: '.$sqlQuery.'<BR>';
-    
+    */
+
     //link do pliku dodaj ADD
     echo '<BR><a href="add.php">Add user</a><BR><BR>';
 
@@ -38,7 +39,8 @@ include('session.php');
         echo '<th>Profession</th>';
         echo '<th>Location</th>';
         echo '<th>Description</th>';
-        echo '<th>Options</th>';
+        echo '<th>Foto</th>';
+        echo '<th>Options</th>';        
     echo '</tr>';
         
     foreach ($tbl->fetchAll() as $value) {
@@ -49,6 +51,14 @@ include('session.php');
             echo '<td>'.$value['nameProf'].'</td>';                                               
             echo '<td>'.$value['location'].'</td>';
             echo '<td>'.$value['description'].'</td>';
+            echo '<td>';
+                if ($value['foto']) {
+                    //echo '<img src="img/' . $value['foto'] .'">';
+                    echo '<a target="_blank" href="img/' . str_replace('foto_', 'org_', $value['foto']) . '"><img src="img/' . $value['foto'] . '"></a>';
+                } else {
+                    echo 'No picture';
+                }
+            echo '</td>';
             echo '<td><a href="delete.php?id='.$value['id_person'].'">Delete</a></td>';     
             echo '<td><a href="add.php?id='.$value['id_person'].'">Edit</a></td>';         
         echo '</tr>';
