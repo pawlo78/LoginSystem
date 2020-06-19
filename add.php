@@ -5,6 +5,25 @@
     if (isset($_POST['name'])) {
 
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+
+        if(isset($_FILES['cover']['error']) && $_FILES['cover']['error'] == 0) {
+            require('vendor/autoload.php');
+
+            $uid = uniqid();
+            $ext = pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION);
+
+
+            $fileName = 'cover_' . $uid . '.' . $ext;
+            $imagine = new Imagine\Gd\Imagine();
+            $size    = new Imagine\Image\Box(200, 200);
+            $mode    = Imagine\Image\ImageInterface::THUMBNAIL_INSET;
+            //$mode    = Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND;
+            $imagine->open($_FILES['cover']['tmp_name'])
+                ->thumbnail($size, $mode)
+                ->save(__DIR__ . '/img/' . $fileName);
+            ;
+        }
+
         if($id >0) {
             $toadd = $pdo->prepare('UPDATE `person` SET `name`= :name, `surname`=:surname, `prof_id`=:prof_id, `location`=:location, `description`=:description WHERE id_person = :id');
             $toadd->bindParam(':id', $id);
@@ -43,7 +62,7 @@
 ?>
 
 
-<form action="add.php" method="post"><BR><BR>
+<form action="add.php" method="post" enctype=multipart/form-data><BR><BR>
 
     <?php
         if($idGet > 0) {
@@ -62,6 +81,7 @@
         ?>
     </select><BR><BR>
     Location: <input type="text" name="location"<?php if(isset($result['location'])) {echo 'value="'.$result['location'].'"';} ?>><BR><BR>
+    Zdjęcie: <input type="file" name="cover"><BR><BR>
     Description: <textarea name="description"><?php if(isset($result['description'])) {echo $result['description'];} ?></textarea><BR><BR>
     <input type="submit" value="Save">
 </form>
